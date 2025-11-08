@@ -1,0 +1,54 @@
+# Системные файлы MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Настройки терминала / оболочки
+*.zshrc
+*.bash_profile
+*.bash_history
+*.zprofile
+*.zsh_sessions/
+*.zshrc.swo
+*.zshrc.swn
+*.zshrc.swp
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# Виртуальные окружения Python
+venv/
+.env/
+.venv/
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Dart / Flutter
+.dart_tool/
+.packages
+.pub-cache/
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Любые другие большие папки, которые не нужны в репозитории
+Downloads/
+Movies/
+Music/
+Pictures/
+Library/
