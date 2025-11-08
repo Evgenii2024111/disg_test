@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Профориентационное тестирование DISG</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .test-section {
+            padding: 40px;
+            display: none;
+        }
+        
+        .test-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .question:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .question h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .option-label {
+            display: block;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        
+        .option-label:hover {
+            border-color: #667eea;
+            background: #f0f7ff;
+            transform: translateX(5px);
+        }
+        
+        input[type="radio"]:checked + .option-label,
+        input[type="checkbox"]:checked + .option-label {
+            border-color: #667eea;
+            background: #f0f7ff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        input[type="radio"],
+        input[type="checkbox"] {
+            display: none;
+        }
+        
+        .results-section {
+            background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+            border-left: 5px solid #4caf50;
+        }
+        
+        .progress-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+        
+        .result-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .result-type {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #667eea;
+        }
+        
+        .result-desc {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        
+        .score-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            height: 25px;
+        }
+        
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 1s ease;
+            width: 0%;
+        }
+        
+        .test-title {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        
+        .test-subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .user-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            margin: 15px 0;
+            transition: border-color 0.3s ease;
+        }
+        
+        .user-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .final-results {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .personality-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px;
+            font-size: 1.1em;
+        }
+        
+        .profession-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px;
+            font-size: 1.1em;
+        }
+        
+        .recommendation {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        @media (max-width: 768px) {
+            .test-section {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>🧠 Полное профориентационное тестирование</h1>
+            <p>Пройдите три теста и получите полный анализ личности и профессиональных склонностей</p>
+        </div>
+
+        <!-- Данные пользователя -->
+        <div id="user-info-section" class="test-section active">
+            <h2 class="test-title">👤 Ваши данные</h2>
+            <p class="test-subtitle">Введите ваше имя для начала тестирования</p>
+            
+            <div class="question">
+                <label for="user-name"><strong>Ваше имя и фамилия:</strong></label>
+                <input type="text" id="user-name" class="user-input" placeholder="Иван Иванов">
+                <p style="color: #718096; margin-top: 10px;">Мы используем это имя для персонализации результатов</p>
+            </div>
+            
+            <div class="navigation">
+                <div></div> <!-- Пустой div для выравнивания -->
+                <button class="btn" onclick="startTest1()" id="start-test-btn" disabled>Начать тестирование →</button>
+            </div>
+        </div>
+
+        <!-- Тест 1 -->
+        <div id="test1-section" class="test-section">
+            <h2 class="test-title">🧠 ТЕСТ 1: Тип личности DISG</h2>
+            <p class="test-subtitle">Выберите один вариант ответа для каждого вопроса</p>
+            
+            <div class="progress-container">
+                <div class="progress-text">
+                    <span>Вопрос <span id="current-question">1</span> из <span id="total-questions">12</span></span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="test1-progress" class="progress"></div>
+                </div>
+            </div>
+
+            <div id="test1-questions">
+                <!-- Вопросы будут добавляться динамически -->
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="test1-prev" onclick="prevTest1Question()" style="display: none;">← Назад</button>
+                <button class="btn" id="test1-next" onclick="nextTest1Question()" disabled>Далее →</button>
+                <button class="btn btn-success" id="test1-complete" onclick="completeTest1()" style="display: none;" disabled>Завершить тест 1</button>
+            </div>
+        </div>
+
+        <!-- Результаты теста 1 -->
+        <div id="test1-results" class="test-section results-section">
+            <h2 class="test-title">📊 РЕЗУЛЬТАТЫ ТЕСТА 1</h2>
+            <div id="test1-results-content">
+                <!-- Результаты будут добавляться динамически -->
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showTest1()">← Вернуться к тесту</button>
+                <button class="btn" onclick="startTest2()">Перейти к тесту 2 →</button>
+            </div>
+        </div>
+
+        <!-- Тест 2 -->
+        <div id="test2-section" class="test-section">
+            <h2 class="test-title">💼 ТЕСТ 2: Личность и профессия</h2>
+            <p class="test-subtitle">В каждом блоке выберите ОДИН вариант, который наиболее точно описывает вас</p>
+            
+            <div id="test2-questions">
+                <!-- Вопросы будут добавляться динамически -->
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showTest1Results()">← Назад к тесту 1</button>
+                <button class="btn" onclick="completeTest2()" id="complete-test2-btn" disabled>Завершить тест 2</button>
+            </div>
+        </div>
+
+        <!-- Результаты теста 2 -->
+        <div id="test2-results" class="test-section results-section">
+            <h2 class="test-title">📊 РЕЗУЛЬТАТЫ ТЕСТА 2</h2>
+            <div id="test2-results-content">
+                <!-- Результаты будут добавляться динамически -->
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showTest2()">← Вернуться к тесту</button>
+                <button class="btn" onclick="startTest3()">Перейти к тесту 3 →</button>
+            </div>
+        </div>
+
+        <!-- Тест 3 -->
+        <div id="test3-section" class="test-section">
+            <h2 class="test-title">🎯 ТЕСТ 3: Профессиональные склонности</h2>
+            <p class="test-subtitle">Отметьте утверждения, которые вам подходят (можно выбрать несколько)</p>
+            
+            <div id="test3-questions">
+                <!-- Вопросы будут добавляться динамически -->
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="showTest2Results()">← Назад к тесту 2</button>
+                <button class="btn btn-success" onclick="completeAllTests()">Завершить все тесты</button>
+            </div>
+        </div>
+
+        <!-- Финальные результаты -->
+        <div id="final-results" class="test-section results-section">
+            <h2 class="test-title">🎓 Ваши итоговые результаты</h2>
+            <div id="final-results-content">
+                <!-- Финальные результаты будут добавляться динамически -->
+            </div>
+            <div class="navigation" style="justify-content: center; gap: 20px;">
+                <button class="btn btn-success" onclick="showDetailedResults()">📊 Подробные результаты</button>
+                <button class="btn btn-danger" onclick="restartTest()">🔄 Пройти заново</button>
+            </div>
+        </div>
+
+        <!-- Детальные результаты -->
+        <div id="detailed-results" class="test-section">
+            <h2 class="test-title">📈 Детальные результаты тестирования</h2>
+            <div id="detailed-results-content">
+                <!-- Детальные результаты будут добавляться динамически -->
+            </div>
+            <div class="navigation" style="justify-content: center;">
+                <button class="btn" onclick="showFinalResults()">← Назад к итогам</button>
+                <button class="btn btn-success" onclick="window.print()">🖨️ Распечатать</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация и данные
+        const PERSONALITY_TYPES = {
+            'D': { 
+                name: '💪 ДОМИНИРУЮЩИЙ', 
+                desc: 'Вы решительный, уверенный, стремитесь к результату и лидерству.',
+                details: 'Сильные стороны: решительность, целеустремленность, лидерские качества. Рекомендуемые сферы: управление, предпринимательство, проектный менеджмент.'
+            },
+            'I': { 
+                name: '🎉 ВЛИЯЮЩИЙ', 
+                desc: 'Вы вдохновляющий, общительный, полны идей и энергии.',
+                details: 'Сильные стороны: коммуникабельность, креативность, умение вдохновлять. Рекомендуемые сферы: маркетинг, PR, продажи, обучение.'
+            },
+            'S': { 
+                name: '🤝 СТАБИЛЬНЫЙ', 
+                desc: 'Вы надёжный, спокойный, умеете слушать и поддерживать.',
+                details: 'Сильные стороны: надежность, терпение, командная работа. Рекомендуемые сферы: обслуживание, поддержка, администрирование, медицина.'
+            },
+            'G': { 
+                name: '📊 АККУРАТНЫЙ', 
+                desc: 'Вы точный, логичный, любите порядок и системность.',
+                details: 'Сильные стороны: аналитическое мышление, внимание к деталям, точность. Рекомендуемые сферы: аналитика, IT, финансы, исследования.'
+            }
+        };
+
+        const PROFESSIONAL_FIELDS = {
+            1: { 
+                name: '🌿 Человек — Природа', 
+                jobs: 'биолог, эколог, агроном, ветеринар, лесничий, геолог, ландшафтный дизайнер',
+                desc: 'Вам нравится работать с природой, животными и растениями. Вы наблюдательны и любите изучать природные процессы.'
+            },
+            2: { 
+                name: '🔧 Человек — Техника', 
+                jobs: 'инженер, механик, программист, архитектор, строитель, электрик, системный администратор',
+                desc: 'Вам близки технические задачи, нравится работать с механизмами, компьютерами и создавать технические решения.'
+            },
+            3: { 
+                name: '👥 Человек — Человек', 
+                jobs: 'психолог, педагог, менеджер, врач, юрист, HR-специалист, коуч, продавец',
+                desc: 'Вы любите общаться с людьми, помогать им, учить и вдохновлять. Легко находите общий язык с разными людьми.'
+            },
+            4: { 
+                name: '📊 Человек — Знаковая система', 
+                jobs: 'математик, экономист, аналитик, бухгалтер, финансист, программист, лингвист',
+                desc: 'Вам нравится работать с цифрами, формулами, кодами и знаковыми системами. Вы внимательны к деталям и любите точность.'
+            },
+            5: { 
+                name: '🎨 Человек — Художественный образ', 
+                jobs: 'дизайнер, актёр, писатель, музыкант, художник, режиссёр, архитектор, фотограф',
+                desc: 'Вы творческий человек, вам важно самовыражение через искусство. Обладаете развитым воображением и чувством прекрасного.'
+            }
+        };
+
+        // Данные тестов
+        let userData = {
+            name: '',
+            startTime: null,
+            endTime: null,
+            results: {}
+        };
+
+        let currentTest1Question = 0;
+
+        // Вопросы теста 1
+        const test1Questions = [
+            {
+                question: "1. Когда начинаю новое дело, я обычно…",
+                options: [
+                    "Берусь решительно и быстро действую [D]",
+                    "Воодушевляю других присоединиться [I]", 
+                    "Продумываю шаги и ищу стабильность [S]",
+                    "Изучаю правила и детали [G]"
+                ]
+            },
+            {
+                question: "2. В группе я чаще…",
+                options: [
+                    "Беру на себя руководство [D]",
+                    "Поддерживаю настроение [I]",
+                    "Слежу за спокойствием [S]",
+                    "Проверяю правильность действий [G]"
+                ]
+            },
+            {
+                question: "3. Когда возникают проблемы…",
+                options: [
+                    "Действую быстро [D]",
+                    "Стараюсь поговорить [I]",
+                    "Жду подходящего момента [S]",
+                    "Анализирую причины [G]"
+                ]
+            },
+            {
+                question: "4. Меня раздражает, когда…",
+                options: [
+                    "Всё тянется слишком долго [D]",
+                    "Атмосфера скучная [I]",
+                    "Люди спорят [S]",
+                    "Нет порядка и точности [G]"
+                ]
+            },
+            {
+                question: "5. Когда я работаю над проектом…",
+                options: [
+                    "Ставлю цель и двигаюсь к ней [D]",
+                    "Люблю вдохновляющие проекты [I]",
+                    "Забочусь о команде [S]",
+                    "Проверяю детали [G]"
+                ]
+            },
+            {
+                question: "6. На меня можно рассчитывать, когда нужно…",
+                options: [
+                    "Быстро принять решение [D]",
+                    "Поддержать других [I]",
+                    "Сделать спокойно и надёжно [S]",
+                    "Сделать точно и без ошибок [G]"
+                ]
+            },
+            {
+                question: "7. Я чувствую себя лучше, когда…",
+                options: [
+                    "Управляю ситуацией [D]",
+                    "В центре общения [I]",
+                    "Всё идёт спокойно [S]",
+                    "Всё логично и структурировано [G]"
+                ]
+            },
+            {
+                question: "8. Моя сильная сторона —",
+                options: [
+                    "Решительность [D]",
+                    "Энергия и общительность [I]",
+                    "Терпение и надёжность [S]",
+                    "Внимательность и аккуратность [G]"
+                ]
+            },
+            {
+                question: "9. В сложной ситуации я…",
+                options: [
+                    "Беру инициативу [D]",
+                    "Вдохновляю команду [I]",
+                    "Помогаю сохранить спокойствие [S]",
+                    "Анализирую ситуацию [G]"
+                ]
+            },
+            {
+                question: "10. Я предпочитаю работать…",
+                options: [
+                    "Самостоятельно, на результат [D]",
+                    "В команде с общением [I]",
+                    "С людьми, которых хорошо знаю [S]",
+                    "В структурированной среде [G]"
+                ]
+            },
+            {
+                question: "11. Моя реакция на критику —",
+                options: [
+                    "Спорю и защищаюсь [D]",
+                    "Перевожу в шутку [I]",
+                    "Принимаю спокойно [S]",
+                    "Анализирую [G]"
+                ]
+            },
+            {
+                question: "12. Если бы меня описали друзья, они бы сказали, что я…",
+                options: [
+                    "Целеустремлённый [D]",
+                    "Весёлый и дружелюбный [I]",
+                    "Спокойный и надёжный [S]",
+                    "Ответственный и внимательный [G]"
+                ]
+            }
+        ];
+
+        // Вопросы теста 2
+        const test2Questions = [
+            {
+                question: "БЛОК 1:",
+                options: [
+                    "a) Мне нравится брать на себя инициативу.",
+                    "b) Я легко завожу друзей.",
+                    "c) Я предпочитаю стабильность и предсказуемость.",
+                    "d) Я люблю, когда всё чётко организовано."
+                ]
+            },
+            {
+                question: "БЛОК 2:",
+                options: [
+                    "a) Я не боюсь рисковать.",
+                    "b) Я вдохновляю других своим энтузиазмом.",
+                    "c) Я терпелив и вынослив.",
+                    "d) Я внимательно проверяю детали."
+                ]
+            },
+            {
+                question: "БЛОК 3:",
+                options: [
+                    "a) Я быстро принимаю решения.",
+                    "b) Я люблю быть в центре внимания.",
+                    "c) Мне комфортно, когда всё спокойно и без спешки.",
+                    "d) Я придерживаюсь правил и стандартов."
+                ]
+            },
+            {
+                question: "БЛОК 4:",
+                options: [
+                    "a) Мне нравится побеждать и достигать целей.",
+                    "b) Я люблю работать в команде и общаться.",
+                    "c) Я избегаю конфликтов.",
+                    "d) Я стараюсь делать всё идеально."
+                ]
+            },
+            {
+                question: "БЛОК 5:",
+                options: [
+                    "a) Я стремлюсь контролировать ситуацию.",
+                    "b) Я умею вдохновлять других.",
+                    "c) Я предан и надёжен.",
+                    "d) Я предпочитаю работать по плану."
+                ]
+            }
+        ];
+
+        // Вопросы теста 3
+        const test3Questions = [
+            {
+                group: "🌿 Группа 1: Работа с природой",
+                options: [
+                    'Мне нравится ухаживать за растениями или животными',
+                    'Я хотел(а) бы работать на свежем воздухе', 
+                    'Мне интересно узнавать о законах природы, экологии, живых организмах',
+                    'Я люблю наблюдать за природными явлениями'
+                ]
+            },
+            {
+                group: "🔧 Группа 2: Работа с техникой",
+                options: [
+                    'Мне нравится собирать или ремонтировать приборы',
+                    'Я люблю разбираться, как устроены машины и устройства',
+                    'Мне интересна работа с компьютерами, роботами или программами',
+                    'Я предпочитаю задачи, где нужно что-то конструировать'
+                ]
+            },
+            {
+                group: "👥 Группа 3: Работа с людьми",
+                options: [
+                    'Мне легко общаться с людьми',
+                    'Я люблю помогать другим решать их проблемы',
+                    'Мне интересно преподавать, обучать, объяснять',
+                    'Я быстро нахожу общий язык с незнакомыми людьми'
+                ]
+            },
+            {
+                group: "📊 Группа 4: Работа с данными",
+                options: [
+                    'Мне нравится работать с числами, таблицами или формулами',
+                    'Я люблю разгадывать логические задачи',
+                    'Я предпочитаю точность и порядок в работе',
+                    'Мне интересно программирование, бухгалтерия или аналитика'
+                ]
+            },
+            {
+                group: "🎨 Группа 5: Творческая работа",
+                options: [
+                    'Мне нравится рисовать, писать, петь или играть на сцене',
+                    'Я ценю красоту форм, звуков, цвета',
+                    'Мне важно выражать свои чувства через творчество',
+                    'Я люблю создавать что-то новое и оригинальное'
+                ]
+            }
+        ];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Активируем кнопку начала теста при вводе имени
+            document.getElementById('user-name').addEventListener('input', function() {
+                const startBtn = document.getElementById('start-test-btn');
+                startBtn.disabled = this.value.trim().length < 2;
+            });
+
+            // Устанавливаем общее количество вопросов
+            document.getElementById('total-questions').textContent = test1Questions.length;
+        });
+
+        // Утилиты для навигации
+        function showSection(sectionId) {
+            // Скрыть все секции
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Показать нужную секцию
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // ТЕСТ 1 Функции
+        function startTest1() {
+            const userName = document.getElementById('user-name').value.trim();
+            if (!userName) {
+                alert('Пожалуйста, введите ваше имя');
+                return;
+            }
+            
+            userData.name = userName;
+            userData.startTime = new Date();
+            
+            showSection('test1-section');
+            renderTest1Question();
+        }
+
+        function renderTest1Question() {
+            const container = document.getElementById('test1-questions');
+            const question = test1Questions[currentTest1Question];
+            
+            container.innerHTML = `
+                <div class="question">
+                    <h3>${question.question}</h3>
+                    ${question.options.map((option, index) => `
+                        <div>
+                            <input type="radio" id="q1-${currentTest1Question}-${index}" name="test1-q${currentTest1Question}" value="${option}" onchange="updateTest1Navigation()">
+                            <label for="q1-${currentTest1Question}-${index}" class="option-label">${option}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Обновляем прогресс
+            const progress = ((currentTest1Question + 1) / test1Questions.length) * 100;
+            document.getElementById('test1-progress').style.width = `${progress}%`;
+            document.getElementById('progress-percent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('current-question').textContent = currentTest1Question + 1;
+            
+            // Управление кнопками
+            document.getElementById('test1-prev').style.display = currentTest1Question === 0 ? 'none' : 'inline-block';
+            document.getElementById('test1-next').style.display = currentTest1Question === test1Questions.length - 1 ? 'none' : 'inline-block';
+            document.getElementById('test1-complete').style.display = currentTest1Question === test1Questions.length - 1 ? 'inline-block' : 'none';
+            
+            updateTest1Navigation();
+        }
+
+        function updateTest1Navigation() {
+            const hasAnswer = document.querySelector(`input[name="test1-q${currentTest1Question}"]:checked`) !== null;
+            document.getElementById('test1-next').disabled = !hasAnswer;
+            document.getElementById('test1-complete').disabled = !hasAnswer;
+        }
+
+        function nextTest1Question() {
+            if (currentTest1Question < test1Questions.length - 1) {
+                currentTest1Question++;
+                renderTest1Question();
+            }
+        }
+
+        function prevTest1Question() {
+            if (currentTest1Question > 0) {
+                currentTest1Question--;
+                renderTest1Question();
+            }
+        }
+
+        function completeTest1() {
+            // Собираем ответы
+            const answers = [];
+            for (let i = 0; i < test1Questions.length; i++) {
+                const selected = document.querySelector(`input[name="test1-q${i}"]:checked`);
+                answers.push(selected ? selected.value : '');
+            }
+            
+            // Проверяем, что все вопросы отвечены
+            if (answers.some(answer => !answer)) {
+                alert('Пожалуйста, ответьте на все вопросы перед завершением теста.');
+                return;
+            }
+            
+            // Обрабатываем результаты
+            userData.results.test1 = processTest1(answers);
+            
+            // Показываем результаты
+            showTest1Results();
+        }
+
+        function processTest1(answers) {
+            let scores = { 'D': 0, 'I': 0, 'S': 0, 'G': 0 };
+            
+            answers.forEach(answer => {
+                const type = extractTypeFromAnswer(answer);
+                if (scores.hasOwnProperty(type)) {
+                    scores[type]++;
+                }
+            });
+            
+            const mainType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            
+            return {
+                testName: 'Тип личности DISG',
+                answers: answers,
+                scores: scores,
+                mainType: mainType,
+                typeInfo: PERSONALITY_TYPES[mainType]
+            };
+        }
+
+        function extractTypeFromAnswer(answer) {
+            const match = answer.match(/\[([DISG])\]/);
+            return match ? match[1] : 'D';
+        }
+
+        function showTest1Results() {
+            const results = userData.results.test1;
+            const container = document.getElementById('test1-results-content');
+            
+            // Находим максимальное значение для нормализации графиков
+            const maxScore = Math.max(...Object.values(results.scores));
+            
+            container.innerHTML = `
+                <div class="result-card">
+                    <div class="result-type">${results.typeInfo.name}</div>
+                    <div class="result-desc">${results.typeInfo.desc}</div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3 style="margin-bottom: 20px;">📊 Распределение баллов:</h3>
+                        ${Object.entries(results.scores).map(([type, score]) => {
+                            const percentage = (score / maxScore) * 100;
+                            return `
+                                <div style="margin: 20px 0;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span><strong>${type}</strong>: ${PERSONALITY_TYPES[type].name.split(' ')[1]}</span>
+                                        <span>${score} баллов</span>
+                                    </div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="recommendation">
+                        <h4>💡 Рекомендации:</h4>
+                        <p>${results.typeInfo.details}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Анимируем прогресс-бары
+            setTimeout(() => {
+                document.querySelectorAll('.score-fill').forEach(bar => {
+                    bar.style.width = bar.style.width;
+                });
+            }, 100);
+            
+            showSection('test1-results');
+        }
+
+        function showTest1() {
+            showSection('test1-section');
+        }
+
+        // ТЕСТ 2 Функции
+        function startTest2() {
+            showSection('test2-section');
+            renderTest2Questions();
+        }
+
+        function renderTest2Questions() {
+            const container = document.getElementById('test2-questions');
+            container.innerHTML = test2Questions.map((question, qIndex) => `
+                <div class="question">
+                    <h3>${question.question}</h3>
+                    ${question.options.map((option, oIndex) => `
+                        <div>
+                            <input type="radio" id="q2-${qIndex}-${oIndex}" name="test2-q${qIndex}" value="${option.charAt(0)}" onchange="updateTest2Completion()">
+                            <label for="q2-${qIndex}-${oIndex}" class="option-label">${option}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function updateTest2Completion() {
+            let allAnswered = true;
+            for (let i = 0; i < test2Questions.length; i++) {
+                if (!document.querySelector(`input[name="test2-q${i}"]:checked`)) {
+                    allAnswered = false;
+                    break;
+                }
+            }
+            document.getElementById('complete-test2-btn').disabled = !allAnswered;
+        }
+
+        function completeTest2() {
+            const answers = [];
+            for (let i = 0; i < test2Questions.length; i++) {
+                const selected = document.querySelector(`input[name="test2-q${i}"]:checked`);
+                answers.push(selected ? selected.value : '');
+            }
+            
+            userData.results.test2 = processTest2(answers);
+            showTest2Results();
+        }
+
+        function processTest2(answers) {
+            let scores = { 'a': 0, 'b': 0, 'c': 0, 'd': 0 };
+            
+            answers.forEach(answer => {
+                if (scores.hasOwnProperty(answer)) {
+                    scores[answer]++;
+                }
+            });
+            
+            const mainType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            
+            return {
+                testName: 'Личность и профессия',
+                answers: answers,
+                scores: scores,
+                mainType: mainType
+            };
+        }
+
+        function showTest2Results() {
+            const results = userData.results.test2;
+            const typeMap = {
+                'a': ['D (Доминирование)', 'Лидер, целеустремлённый, решительный, ориентирован на результат.'],
+                'b': ['I (Влияние)', 'Общительный, энергичный, оптимистичный, любит быть в центре внимания.'],
+                'c': ['S (Устойчивость)', 'Надёжный, спокойный, доброжелательный, предпочитает стабильность.'],
+                'd': ['C (Сознательность)', 'Точный, внимательный, аккуратный, следует правилам.']
+            };
+            
+            const mainType = typeMap[results.mainType];
+            const maxScore = Math.max(...Object.values(results.scores));
+            
+            const container = document.getElementById('test2-results-content');
+            container.innerHTML = `
+                <div class="result-card">
+                    <div class="result-type">${mainType[0]}</div>
+                    <div class="result-desc">${mainType[1]}</div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3 style="margin-bottom: 20px;">📊 Статистика ответов:</h3>
+                        ${Object.entries(results.scores).map(([type, score]) => {
+                            const percentage = (score / maxScore) * 100;
+                            const typeDesc = typeMap[type];
+                            return `
+                                <div style="margin: 20px 0;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span><strong>${type.toUpperCase()})</strong> ${typeDesc[0].split(' ')[0]}</span>
+                                        <span>${score} выборов</span>
+                                    </div>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: ${percentage}%; background: linear-gradient(90deg, #4ecdc4, #44a08d);"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Анимируем прогресс-бары
+            setTimeout(() => {
+                document.querySelectorAll('.score-fill').forEach(bar => {
+                    bar.style.width = bar.style.width;
+                });
+            }, 100);
+            
+            showSection('test2-results');
+        }
+
+        function showTest2() {
+            showSection('test2-section');
+        }
+
+        function showTest1Results() {
+            showSection('test1-results');
+        }
+
+        // ТЕСТ 3 Функции
+        function startTest3() {
+            showSection('test3-section');
+            renderTest3Questions();
+        }
+
+        function renderTest3Questions() {
+            const container = document.getElementById('test3-questions');
+            container.innerHTML = test3Questions.map((group, gIndex) => `
+                <div class="question">
+                    <h3>${group.group}</h3>
+                    ${group.options.map((option, oIndex) => `
+                        <div>
+                            <input type="checkbox" id="q3-${gIndex}-${oIndex}" name="test3-g${gIndex}" value="${option}">
+                            <label for="q3-${gIndex}-${oIndex}" class="option-label">${option}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function completeAllTests() {
+            const answers = [];
+            for (let i = 0; i < test3Questions.length; i++) {
+                const selected = Array.from(document.querySelectorAll(`input[name="test3-g${i}"]:checked`))
+                    .map(input => input.value);
+                answers.push(selected);
+            }
+            
+            userData.results.test3 = processTest3(answers);
+            userData.endTime = new Date();
+            
+            // Сохраняем результаты
+            saveResults();
+            showFinalResults();
+        }
+
+        function processTest3(answers) {
+            let scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            
+            answers.forEach((answer, index) => {
+                scores[index + 1] = answer.length;
+            });
+            
+            const mainField = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            
+            return {
+                testName: 'Профессиональные склонности',
+                answers: answers,
+                scores: scores,
+                mainField: parseInt(mainField),
+                fieldInfo: PROFESSIONAL_FIELDS[mainField]
+            };
+        }
+
+        function showFinalResults() {
+            const container = document.getElementById('final-results-content');
+            const test1 = userData.results.test1;
+            const test3 = userData.results.test3;
+            
+            container.innerHTML = `
+                <div class="result-card">
+                    <h2 style="color: #4caf50; margin-bottom: 30px;">🎉 Поздравляем с завершением тестирования!</h2>
+                    <p style="font-size: 1.3em; margin-bottom: 30px;"><strong>${userData.name}</strong>, вы успешно прошли все три теста.</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 40px 0;">
+                        <div style="background: linear-gradient(135deg, #f0f7ff, #e3f2fd); padding: 25px; border-radius: 15px; text-align: center;">
+                            <h3 style="color: #667eea; margin-bottom: 15px;">🧠 Тип личности</h3>
+                            <div class="personality-badge">${test1.typeInfo.name}</div>
+                            <p style="margin-top: 15px; color: #4a5568;">${test1.typeInfo.desc}</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #f0fff4, #e8f5e8); padding: 25px; border-radius: 15px; text-align: center;">
+                            <h3 style="color: #4caf50; margin-bottom: 15px;">🎯 Профессиональная сфера</h3>
+                            <div class="profession-badge">${test3.fieldInfo.name}</div>
+                            <p style="margin-top: 15px; color: #4a5568;">${test3.fieldInfo.desc}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation">
+                        <h3>💼 Рекомендуемые профессии:</h3>
+                        <p style="font-size: 1.2em; margin-top: 10px;"><strong>${test3.fieldInfo.jobs}</strong></p>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px;">
+                        <p style="margin: 0; color: #856404;">
+                            <strong>💡 Совет:</strong> Используйте эти результаты как ориентир для дальнейшего профессионального развития. 
+                            Рекомендуем проконсультироваться с карьерным консультантом для более точного выбора.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            showSection('final-results');
+        }
+
+        function showTest2Results() {
+            showSection('test2-results');
+        }
+
+        // Детальные результаты
+        function showDetailedResults() {
+            const container = document.getElementById('detailed-results-content');
+            const test1 = userData.results.test1;
+            const test2 = userData.results.test2;
+            const test3 = userData.results.test3;
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: #2d3748;">Подробный анализ результатов</h2>
+                    <p style="color: #718096;">Полная статистика по всем трем тестам</p>
+                </div>
+                
+                <!-- Тест 1 -->
+                <div class="result-card" style="text-align: left;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">🧠 ТЕСТ 1: Тип личности DISG</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        ${Object.entries(test1.scores).map(([type, score]) => `
+                            <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                                <div style="font-size: 1.5em; font-weight: bold; color: #667eea;">${type}</div>
+                                <div style="font-size: 1.2em;">${score} баллов</div>
+                                <div style="color: #718096; font-size: 0.9em;">${PERSONALITY_TYPES[type].name.split(' ')[1]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Тест 2 -->
+                <div class="result-card" style="text-align: left;">
+                    <h3 style="color: #4ecdc4; margin-bottom: 20px;">💼 ТЕСТ 2: Личность и профессия</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        ${Object.entries(test2.scores).map(([type, score]) => `
+                            <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                                <div style="font-size: 1.5em; font-weight: bold; color: #4ecdc4;">${type.toUpperCase()}</div>
+                                <div style="font-size: 1.2em;">${score} выборов</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Тест 3 -->
+                <div class="result-card" style="text-align: left;">
+                    <h3 style="color: #45b7d1; margin-bottom: 20px;">🎯 ТЕСТ 3: Профессиональные склонности</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                        ${Object.entries(test3.scores).map(([field, score]) => `
+                            <div style="padding: 15px; background: #f7fafc; border-radius: 10px;">
+                                <div style="font-weight: bold; color: #45b7d1; margin-bottom: 10px;">${PROFESSIONAL_FIELDS[field].name}</div>
+                                <div>${score} из 4 выборов</div>
+                                <div style="color: #718096; font-size: 0.9em; margin-top: 5px;">${PROFESSIONAL_FIELDS[field].jobs.split(', ').slice(0, 2).join(', ')}...</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            showSection('detailed-results');
+        }
+
+        function showFinalResults() {
+            showSection('final-results');
+        }
+
+        // Сохранение и сброс
+        function saveResults() {
+            // Сохранение в localStorage
+            const allResults = JSON.parse(localStorage.getItem('allTestResults') || '[]');
+            allResults.push(userData);
+            localStorage.setItem('allTestResults', JSON.stringify(allResults));
+            
+            console.log('Результаты сохранены:', userData);
+        }
+
+        function restartTest() {
+            if (confirm('Вы уверены, что хотите начать тест заново? Все текущие результаты будут потеряны.')) {
+                userData = {
+                    name: '',
+                    startTime: null,
+                    endTime: null,
+                    results: {}
+                };
+                currentTest1Question = 0;
+                
+                // Сброс формы
+                document.getElementById('user-name').value = '';
+                document.getElementById('start-test-btn').disabled = true;
+                
+                showSection('user-info-section');
+            }
+        }
+    </script>
+</body>
+</html>
